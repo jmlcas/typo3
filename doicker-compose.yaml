@@ -1,0 +1,49 @@
+services:
+
+  typo3-web:
+    image: martinhelmich/typo3:12.4
+    container_name: typo3-web
+    restart: unless-stopped
+    ports:
+      - "8200:80"
+    volumes:
+      - typo3_data:/var/www/html
+    networks:
+      - typo3
+
+  typo3-db:
+    image: mariadb:latest
+    container_name: typo3-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=typo3
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=typo3
+      - MYSQL_CHARACTER_SET=utf8
+      - MYSQL_COLLATION=utf8_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - typo3
+
+  typo3-pma:
+    image: phpmyadmin:latest
+    container_name: typo3-pma
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    depends_on:
+      - typo3-db
+    environment:
+      - PMA_HOST=typo3-db
+      - MYSQL_ROOT_PASSWORD=password
+    networks:
+      - typo3
+
+networks:
+  typo3:
+
+volumes:
+  db_data:
+  typo3_data: 
