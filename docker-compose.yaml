@@ -6,6 +6,8 @@ services:
     restart: unless-stopped
     ports:
       - "8200:80"
+    depends_on:
+      - typo3-db      
     volumes:
       - typo3_data:/var/www/html
     networks:
